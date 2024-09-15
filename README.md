@@ -53,5 +53,6 @@ python cmd_interface.py --output_directory ./examples/out --target_directory ./e
 Running black, isort, flake8 and mypy:
 
 ```zsh
+pipenv install --dev
 make format
 ```
