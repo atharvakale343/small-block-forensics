@@ -10,7 +10,13 @@ An approximation of the [small block forensics technique](https://gist.github.co
 pip install pipenv
 ```
 
-2. Install dependencies
+2. Activate the venv
+
+```zsh
+pipenv shell
+```
+
+3. Install dependencies
 
 ```zsh
 pipenv install
