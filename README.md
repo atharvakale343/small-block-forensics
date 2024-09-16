@@ -1,6 +1,6 @@
 ## Small Block Forensics
 
-An approximation of the [small block forensics technique](https://gist.github.com/atharvakale343/614a721b9ae429d1dce8ee14dd3bed52) that takes two directories as input (target directory, known content directory), and uses the small block randomized technique to find the existence of some file from the known content directory within the target directory.
+An approximation of the [small block forensics technique](https://gist.github.com/atharvakale343/614a721b9ae429d1dce8ee14dd3bed52) that takes two directories as input (target directory, known content directory), and uses the small block randomized technique to find the existence of some file from the known content directory within the target directory. For a visual intro to small block forensics, see this [PDF deck](./docs/intro-to-small-block-forensics.pdf).
 
 ### Installing requirements
 
