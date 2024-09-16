@@ -43,6 +43,8 @@ class ModelResponse(BaseModel):
     found: bool
     target_file: Optional[str] = None
     known_dataset_file: Optional[str] = None
+    block_num_in_known_dataset: Optional[int] = None
+    block_num_in_target: Optional[int] = None
 
     # Additional validation to ensure files are provided if found is True
     @classmethod

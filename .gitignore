@@ -1,3 +1,6 @@
+examples/out/*
+examples-bak
+
 # MacOS
 .DS_Store
 

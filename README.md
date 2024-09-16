@@ -45,7 +45,7 @@ python cmd_interface.py --output_directory ./examples/out --target_directory ./e
 Run SBF on a pre-generated known content directory SQLite DB and target directory
 
 ```zsh
-python cmd_interface.py --output_directory ./examples/out --target_directory ./examples/target_folder --existing_known_content_db ./examples/known_dataset.sqlite3
+python cmd_interface.py --output_directory ./examples/out --target_directory ./examples/target_folder --existing_known_content_db ./examples/out/known_content_hashes.sqlite
 ```
 
 ### Developing SBF

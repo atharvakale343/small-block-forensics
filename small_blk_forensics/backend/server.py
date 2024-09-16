@@ -13,7 +13,6 @@ from small_blk_forensics.utils.data import InputTypeKey, ModelRequest
 
 from ..ml.model import SmallBlockForensicsModel
 
-model = SmallBlockForensicsModel()
 server = MLServer(__name__)
 
 
@@ -70,6 +69,10 @@ def execute(inputs: list[dict], parameters: dict):
             status=400,
         ).get_response()
 
+    model = SmallBlockForensicsModel(
+        model_request.parameters.block_size, model_request.parameters.target_probability
+    )
+
     if known_content_directory:
         if not is_dir_path(known_content_directory):
             return ErrorResponse(f"{known_content_directory} is not a valid path", status=400).get_response()
@@ -91,7 +94,7 @@ def execute(inputs: list[dict], parameters: dict):
 
         return TextResponse(
             model.run_with_known_content_sqlite(
-                existing_known_content_db_path, target_directory_path, output_directory_path
+                existing_known_content_db_path, target_directory_path
             ).model_dump(exclude_none=True)
         ).get_response()
 

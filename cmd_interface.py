@@ -34,6 +34,20 @@ def main():
         help="The path to the existing SQLite DB containing hashes of known content",
         default=None,
     )
+    parser.add_argument(
+        "--target_probability",
+        type=float,
+        help="The target probability to achieve. Higher means more of the target drive will be scanned. Defaults to 0.95",
+        default=0.95,
+        required=False,
+    )
+    parser.add_argument(
+        "--block_size",
+        type=int,
+        help="The block size in bytes to be used. Defaults to 4096.",
+        default=4096,
+        required=False,
+    )
     args = parser.parse_args()
 
     target_directory, output_directory = Path(args.target_directory), Path(args.output_directory)
@@ -45,16 +59,24 @@ def main():
     output_directory = Path(args.output_directory)
     output_directory.mkdir(parents=True, exist_ok=True)
 
-    model = SmallBlockForensicsModel()
+    model = SmallBlockForensicsModel(args.block_size, args.target_probability)
+    print()
     if known_content_directory:
-        model.run_with_known_content_directory(
+        result = model.run_with_known_content_directory(
             Path(known_content_directory), target_directory, output_directory
         )
     else:
-        model.run_with_known_content_sqlite(
-            Path(existing_known_content_db), target_directory, output_directory
-        )
-    print(f"SBF for {target_directory} completed successfully!")
+        result = model.run_with_known_content_sqlite(Path(existing_known_content_db), target_directory)
+
+    print("Results:")
+    print(f"\tMatch: {"Yes" if result.found else "No"}")
+    print(f"\tTarget Probability: {args.target_probability}")
+    print(f"\tBlock Size: {args.block_size}")
+    if result.found:
+        print(f"\tMatched Target File: {result.target_file}")
+        print(f"\tMatch Known Dataset File: {result.known_dataset_file}")
+        print(f"\tBlock Num in Known Dataset File: {result.block_num_in_known_dataset}")
+        print(f"\tBlock Num in Target File: {result.block_num_in_target}")
 
 
 if __name__ == "__main__":
