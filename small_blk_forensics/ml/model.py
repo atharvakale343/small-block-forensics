@@ -30,6 +30,8 @@ class SmallBlockForensicsModel:
         """
         Applies the small block technique to the known content directory and target directory.
         """
+        if out_sql_path.is_file():
+            out_sql_path.unlink()
         db_conn = self._get_db_conn(out_sql_path)
 
         # Fully hash the known content directory and store hashes in the output directory's database
@@ -49,6 +51,8 @@ class SmallBlockForensicsModel:
         """
         Applies the small block technique using known content from an SQLite database.
         """
+        if not known_content_sqlite.is_file():
+            raise FileNotFoundError(known_content_sqlite)
         db_conn = self._get_db_conn(known_content_sqlite)
 
         # Set number of hashed blocks
