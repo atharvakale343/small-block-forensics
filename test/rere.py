@@ -56,7 +56,7 @@ def capture(shell: str) -> dict:
         print(f"RUNNING: {new_shell}")
         process = subprocess.run(['sh', '-c', new_shell])
         return {
-            'shell': shell,
+            'shell': new_shell,
             'returncode': 0,
             'stdout': b'',
             'stderr': b'',
@@ -147,7 +147,13 @@ if __name__ == '__main__':
                 print(f"    ACTUAL:   {shell}")
                 print(f"NOTE: You may want to do `{program_name} record {test_list_path}` to update {test_list_path}.bi")
                 exit(1)
-            process = subprocess.run(['sh', '-c', shell], capture_output = True);
+            if shell.startswith("(NOCAPTURE)"):
+                new_shell = " ".join(shell.split(" ")[1:])
+                process = subprocess.run(['sh', '-c', new_shell])
+                process.stdout = b''
+                process.stderr = b''
+            else:
+                process = subprocess.run(['sh', '-c', shell], capture_output = True)
             failed = False
             if process.returncode != snapshot['returncode']:
                 print(f"UNEXPECTED: return code")
