@@ -56,7 +56,7 @@ def capture(shell: str) -> dict:
         print(f"RUNNING: {new_shell}")
         process = subprocess.run(['sh', '-c', new_shell])
         return {
-            'shell': new_shell,
+            'shell': shell,
             'returncode': 0,
             'stdout': b'',
             'stderr': b'',
