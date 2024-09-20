@@ -1,6 +1,7 @@
 from enum import StrEnum
 from typing import List, Optional
 
+from flask_ml.flask_ml_server.models import CustomInput
 from pydantic import BaseModel
 
 
@@ -8,8 +9,8 @@ from pydantic import BaseModel
 class InputTypeKey(StrEnum):
     TARGET_FOLDER = "TARGET_FOLDER"
     KNOWN_DATASET = "KNOWN_DATASET"
-    KNOWN_DATASET_SQL = "KNOWN_DATASET_SQL"
-    OUTPUT_FOLDER = "OUTPUT_FOLDER"
+    INPUT_SQL = "INPUT_SQL"
+    OUTPUT_SQL_PATH = "OUTPUT_SQL_PATH"
 
 
 # Model for individual input
@@ -25,21 +26,21 @@ class _Parameters(BaseModel):
 
 
 # Model for request
-class ModelRequest(BaseModel):
+class MyModelRequest(BaseModel):
     data_type: str
-    inputs: List[_Input]
+    inputs: List[CustomInput]
     parameters: _Parameters
 
     @classmethod
     def validate_files(cls, result):
         input_keys = [inp.input_type for inp in result.inputs]
-        if InputTypeKey.KNOWN_DATASET in input_keys and InputTypeKey.KNOWN_DATASET_SQL in input_keys:
+        if InputTypeKey.KNOWN_DATASET in input_keys and InputTypeKey.INPUT_SQL in input_keys:
             raise ValueError("Both known_dataset path and known_dataset_sql path cannot be provided.")
         return result
 
 
 # Model for result
-class ModelResponse(BaseModel):
+class MyModelResponse(BaseModel):
     found: bool
     target_file: Optional[str] = None
     known_dataset_file: Optional[str] = None

@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask-ml = "*"
 pydantic = "~=2.9"
+flask-ml = "*"
 
 [dev-packages]
 black = "~=24.8"

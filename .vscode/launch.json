@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python Debugger: Current File with Arguments",
+      "name": "cmd_interface",
       "type": "debugpy",
       "request": "launch",
       "program": "cmd_interface.py",
@@ -19,6 +19,20 @@
         "./examples/known_dataset"
       ],
       "preLaunchTask": "remove-sqlite"
+    },
+    {
+      "name": "client_example",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "client_example.py",
+      "console": "integratedTerminal",
+    },
+    {
+      "name": "server",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "small_blk_forensics.backend.server",
+      "console": "integratedTerminal",
     }
   ]
 }

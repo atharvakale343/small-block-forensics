@@ -7,7 +7,7 @@ from math import prod
 from pathlib import Path
 from typing import List, Tuple
 
-from small_blk_forensics.utils.data import ModelResponse
+from small_blk_forensics.utils.data import MyModelResponse
 
 
 def prod_prob(n_samples, blocks_of_known_content, total_blocks_to_scan):
@@ -19,10 +19,45 @@ class SmallBlockForensicsModel:
     def __init__(self, block_size: int = 4096, target_probability: float = 1):
         self.block_size = block_size
         self.target_probability = target_probability
-        self.num_hashed_blocks = 0  # will be set at runtime
+        self.num_hashed_blocks_in_known_cntnt = 0  # will be set at runtime
         self.num_random_blocks = (
             0  # will be set at runtime based on number of blocks in target and known directory
         )
+
+    def run_with_known_content_directory(
+        self, known_content_directory: Path, target_directory: Path, out_sql_path: Path
+    ) -> MyModelResponse:
+        """
+        Applies the small block technique to the known content directory and target directory.
+        """
+        db_conn = self._get_db_conn(out_sql_path)
+
+        # Fully hash the known content directory and store hashes in the output directory's database
+        self._hash_directory(known_content_directory, db_conn, out_sql_path)
+
+        # Set number of hashed blocks
+        self.num_hashed_blocks_in_known_cntnt = self._get_number_of_hashed_blocks(db_conn)
+
+        # Hash the target directory and check for matches using random blocks
+        response = self._hash_directory_random_blocks(target_directory, db_conn)
+
+        return response
+
+    def run_with_known_content_sqlite(
+        self, known_content_sqlite: Path, target_directory: Path
+    ) -> MyModelResponse:
+        """
+        Applies the small block technique using known content from an SQLite database.
+        """
+        db_conn = self._get_db_conn(known_content_sqlite)
+
+        # Set number of hashed blocks
+        self.num_hashed_blocks_in_known_cntnt = self._get_number_of_hashed_blocks(db_conn)
+
+        # Hash the target directory and check for matches
+        response = self._hash_directory_random_blocks(target_directory, db_conn)
+
+        return response
 
     def _calculate_num_random_blocks(self, blocks_of_known_content, blocks_in_target) -> int:
         """Find the minimum number of samples where the probability < threshold."""
@@ -92,7 +127,7 @@ class SmallBlockForensicsModel:
         result = c.fetchone()
         return result[0]
 
-    def _get_all_blocks_from_file(self, file_path: Path, db_conn: sqlite3.Connection) -> None:
+    def _hash_all_blocks_in_file(self, file_path: Path, db_conn: sqlite3.Connection) -> None:
         """
         Hash all blocks from a given file and store the hashes and file paths in the database.
         """
@@ -170,7 +205,9 @@ class SmallBlockForensicsModel:
                 total_blocks += num_blocks_in_file
 
         # Set the number of blocks parameter
-        self.num_random_blocks = self._calculate_num_random_blocks(self.num_hashed_blocks, total_blocks)
+        self.num_random_blocks = self._calculate_num_random_blocks(
+            self.num_hashed_blocks_in_known_cntnt, total_blocks
+        )
 
         return file_block_map, total_blocks
 
@@ -207,7 +244,7 @@ class SmallBlockForensicsModel:
 
         return selected_blocks
 
-    def _hash_directory_random_blocks(self, directory: Path, db_conn: sqlite3.Connection) -> ModelResponse:
+    def _hash_directory_random_blocks(self, directory: Path, db_conn: sqlite3.Connection) -> MyModelResponse:
         """
         Hashes random blocks from all files in the directory, and checks the known content hashes in the DB.
         If a match is found, it returns immediately with the file path and hash.
@@ -219,7 +256,7 @@ class SmallBlockForensicsModel:
                 self._get_random_blocks_from_file(file_path, random_blocks, db_conn)
             )
             if found:
-                return ModelResponse(
+                return MyModelResponse(
                     found=True,
                     target_file=str(file_path),
                     known_dataset_file=known_file_path,
@@ -227,15 +264,23 @@ class SmallBlockForensicsModel:
                     block_num_in_known_dataset=block_num_in_known_dataset,
                 )
 
-        return ModelResponse(found=False)
+        return MyModelResponse(found=False)
 
-    def _hash_directory(self, directory: Path, db_conn: sqlite3.Connection) -> None:
+    def hash_directory(self, directory: Path, out_sql_path: Path) -> None:
+        db_conn = self._get_db_conn(out_sql_path)
+
+        # Fully hash the known content directory and store hashes in the output directory's database
+        self._hash_directory(directory, db_conn, out_sql_path)
+
+    def _hash_directory(self, directory: Path, db_conn: sqlite3.Connection, out_path: Path) -> None:
         """
         Fully hashes all blocks of files in the given directory and stores the results in the database.
         """
         for file_path in directory.rglob("*"):
             if file_path.is_file():
-                self._get_all_blocks_from_file(file_path, db_conn)
+                self._hash_all_blocks_in_file(file_path, db_conn)
+        print(f"INFO: Successfully processed {str(directory)}")
+        print(f"INFO: Stored hashes at {out_path}")
 
     def _generate_db_filename(self, output_directory: Path):
         # return output_directory / f"known_content_hashes_{str(uuid4())[:8]}.sqlite"
@@ -243,40 +288,3 @@ class SmallBlockForensicsModel:
 
     def _get_db_conn(self, db_path: Path):
         return sqlite3.connect(db_path)
-
-    def run_with_known_content_directory(
-        self, known_content_directory: Path, target_directory: Path, out_dir: Path
-    ) -> ModelResponse:
-        """
-        Applies the small block technique to the known content directory and target directory.
-        """
-        db_path = self._generate_db_filename(out_dir)
-        db_conn = self._get_db_conn(db_path)
-
-        # Fully hash the known content directory and store hashes in the output directory's database
-        self._hash_directory(known_content_directory, db_conn)
-        print(f"INFO: Successfully processed {str(known_content_directory)} and stored hashes at {db_path}")
-
-        # Set number of hashed blocks
-        self.num_hashed_blocks = self._get_number_of_hashed_blocks(db_conn)
-
-        # Hash the target directory and check for matches using random blocks
-        response = self._hash_directory_random_blocks(target_directory, db_conn)
-
-        return response
-
-    def run_with_known_content_sqlite(
-        self, known_content_sqlite: Path, target_directory: Path
-    ) -> ModelResponse:
-        """
-        Applies the small block technique using known content from an SQLite database.
-        """
-        db_conn = self._get_db_conn(known_content_sqlite)
-
-        # Set number of hashed blocks
-        self.num_hashed_blocks = self._get_number_of_hashed_blocks(db_conn)
-
-        # Hash the target directory and check for matches
-        response = self._hash_directory_random_blocks(target_directory, db_conn)
-
-        return response
