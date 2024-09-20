@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pydantic = "~=2.9"
-flask-ml = "*"
+flask-ml = "0.0.8"
 
 [dev-packages]
 black = "~=24.8"
