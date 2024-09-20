@@ -6,12 +6,14 @@ name = "pypi"
 [packages]
 pydantic = "~=2.9"
 flask-ml = "0.0.8"
+colorama = "*"
 
 [dev-packages]
 black = "~=24.8"
 mypy = "~=1.11"
 flake8 = "~=7.1"
 isort = "~=5.13"
+hapless = "*"
 
 [requires]
 python_version = "3.11"

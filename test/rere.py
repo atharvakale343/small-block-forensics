@@ -51,14 +51,26 @@ def write_blob_field(f: BinaryIO, name: bytes, blob: bytes):
     f.write(b'\n')
 
 def capture(shell: str) -> dict:
-    print(f"CAPTURING: {shell}")
-    process = subprocess.run(['sh', '-c', shell], capture_output = True)
-    return {
-        'shell': shell,
-        'returncode': process.returncode,
-        'stdout': process.stdout,
-        'stderr': process.stderr,
-    }
+    if shell.startswith("(NOCAPTURE)"):
+        new_shell = " ".join(shell.split(" ")[1:])
+        print(f"RUNNING: {new_shell}")
+        process = subprocess.run(['sh', '-c', new_shell])
+        return {
+            'shell': shell,
+            'returncode': 0,
+            'stdout': b'',
+            'stderr': b'',
+        }
+        
+    else:
+        print(f"CAPTURING: {shell}")
+        process = subprocess.run(['sh', '-c', shell], capture_output = True)
+        return {
+            'shell': shell,
+            'returncode': process.returncode,
+            'stdout': process.stdout,
+            'stderr': process.stderr,
+        }
 
 def load_list(file_path: str) -> list[str]:
     with open(file_path) as f:

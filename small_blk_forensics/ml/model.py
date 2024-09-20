@@ -42,6 +42,7 @@ class SmallBlockForensicsModel:
 
         # Hash the target directory and check for matches using random blocks
         response = self._hash_directory_random_blocks(target_directory, db_conn)
+        db_conn.close()
 
         return response
 
@@ -60,6 +61,7 @@ class SmallBlockForensicsModel:
 
         # Hash the target directory and check for matches
         response = self._hash_directory_random_blocks(target_directory, db_conn)
+        db_conn.close()
 
         return response
 
@@ -275,6 +277,7 @@ class SmallBlockForensicsModel:
 
         # Fully hash the known content directory and store hashes in the output directory's database
         self._hash_directory(directory, db_conn, out_sql_path)
+        db_conn.close()
 
     def _hash_directory(self, directory: Path, db_conn: sqlite3.Connection, out_path: Path) -> None:
         """
