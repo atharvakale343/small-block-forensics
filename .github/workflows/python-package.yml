@@ -26,4 +26,5 @@ jobs:
 
     - name: Run tests
       run: |
+        pipenv shell
         make test-replay
