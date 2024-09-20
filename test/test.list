@@ -7,8 +7,3 @@ python cmd_interface.py generate_hashes --output_sql ./examples/out/known_conten
 # Run SBF on a pre-generated known content directory SQLite DB and target directory
 python cmd_interface.py hash_random_blocks --input_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --block_size 4 | head -n -2
 
-# Server-client test
-(NOCAPTURE) hap run --check python -m small_blk_forensics.backend.server
-sleep 3 && python client_example.py
-hap kill --all
-hap cleanall

@@ -1,0 +1,5 @@
+# Server-client test
+(NOCAPTURE) hap run --check python -m small_blk_forensics.backend.server
+sleep 3 && python client_example.py
+hap kill --all
+hap cleanall

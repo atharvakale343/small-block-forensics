@@ -11,3 +11,9 @@ test-record:
 
 test-replay:
 	python test/rere.py replay test/test.list
+
+test-smoketest-record:
+	python test/rere.py record test/test.smoketest.list
+
+test-smoketest-replay:
+	python test/rere.py replay test/test.smoketest.list
