@@ -21,10 +21,10 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pipenv
-        pipenv install
-        pipenv install --dev
+        pipenv shell
+        pipenv requirements --dev > requirements.txt
+        pip install -r requirements.txt
 
     - name: Run tests
       run: |
-        pipenv shell
         make test-replay
