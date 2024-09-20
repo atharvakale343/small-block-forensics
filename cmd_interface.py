@@ -15,7 +15,7 @@ def _ensure_output_file_path(path: Path):
 def _print_results(result: MyModelResponse, args: argparse.Namespace):
     print()
     print("Results:")
-    print(f"\tMatch: {"Yes" if result.found else "No"}")
+    print(f"\tMatch: {'Yes' if result.found else 'No'}")
     print(f"\tTarget Probability: {args.target_probability}")
     print(f"\tBlock Size: {args.block_size}")
     if result.found:
