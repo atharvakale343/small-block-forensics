@@ -39,20 +39,20 @@ python client_example.py
 Run SBF on a known content directory and target directory
 
 ```zsh
-python cmd_interface.py gen_hash_and_hash_random --output_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --known_content_directory ./examples/known_dataset --block_size 4
+python cmd_interface.py gen_hash_random --output_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --known_content_directory ./examples/known_dataset --block_size 4
 ```
 
 Generate a SQLite DB contains hashes of all the blocks within a source directory
 
 ```zsh
-python cmd_interface.py generate_hashes --output_sql ./examples/out/known_content_hashes.sqlite --known_content_directory ./examples/known_dataset --block_size 4
+python cmd_interface.py gen_hash --output_sql ./examples/out/known_content_hashes.sqlite --known_content_directory ./examples/known_dataset --block_size 4
 ```
 
 
 Run SBF on a pre-generated known content directory SQLite DB and target directory
 
 ```zsh
-python cmd_interface.py hash_random_blocks --input_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --block_size 4
+python cmd_interface.py hash_random --input_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --block_size 4
 ```
 
 ### Developing SBF

@@ -1,4 +1,8 @@
 examples/out/*
+utils/
+test.py
+examples/known_dataset_images
+examples/target_folder_images
 
 # MacOS
 .DS_Store

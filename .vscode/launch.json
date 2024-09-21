@@ -5,14 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "cmd_interface",
+      "name": "gen_hash_random cmd_interface",
       "type": "debugpy",
       "request": "launch",
       "program": "cmd_interface.py",
       "console": "integratedTerminal",
       "args": [
-        "--output_directory",
-        "./examples/out",
+        "gen_hash_random",
+        "--output_sql",
+        "./examples/out/known_content_hashes.sqlite",
         "--target_directory",
         "./examples/target_folder",
         "--known_content_directory",
@@ -21,18 +22,32 @@
       "preLaunchTask": "remove-sqlite"
     },
     {
+      "name": "gen_hash cmd_interface",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cmd_interface.py",
+      "console": "integratedTerminal",
+      "args": [
+        "gen_hash",
+        "--output_sql",
+        "./examples/out/known_content_images_hashes.sqlite",
+        "--known_content_directory",
+        "./examples/known_dataset_images"
+      ]
+    },
+    {
       "name": "client_example",
       "type": "debugpy",
       "request": "launch",
       "program": "client_example.py",
-      "console": "integratedTerminal",
+      "console": "integratedTerminal"
     },
     {
       "name": "server",
       "type": "debugpy",
       "request": "launch",
       "module": "small_blk_forensics.backend.server",
-      "console": "integratedTerminal",
+      "console": "integratedTerminal"
     }
   ]
 }

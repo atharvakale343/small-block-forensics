@@ -1,18 +1,25 @@
 import hashlib
-import mmap
 import os
 import random
 import sqlite3
+from collections import namedtuple
 from math import prod
 from pathlib import Path
 from typing import List, Tuple
 
+from tqdm import tqdm
+
 from small_blk_forensics.utils.data import MyModelResponse
+
+IS_TEST_MODE = 'TESTING' in os.environ
 
 
 def prod_prob(n_samples, blocks_of_known_content, total_blocks_to_scan):
     C, N = blocks_of_known_content, total_blocks_to_scan
     return prod(((N - (i - 1)) - C) / (N - (i - 1)) for i in range(1, n_samples + 1))
+
+
+TableCell = namedtuple("TableCell", ["file_path", "block_num", "hash_value"])
 
 
 class SmallBlockForensicsModel:
@@ -36,6 +43,7 @@ class SmallBlockForensicsModel:
 
         # Fully hash the known content directory and store hashes in the output directory's database
         self._hash_directory(known_content_directory, db_conn, out_sql_path)
+        print()
 
         # Set number of hashed blocks
         self.num_hashed_blocks_in_known_cntnt = self._get_number_of_hashed_blocks(db_conn)
@@ -90,9 +98,7 @@ class SmallBlockForensicsModel:
         """
         return hashlib.md5(block).hexdigest()
 
-    def _store_hash_in_db(
-        self, block_num: int, hash_value: str, file_path: str, db_conn: sqlite3.Connection
-    ) -> None:
+    def _store_hashes_in_db(self, cells: list[TableCell], db_conn: sqlite3.Connection) -> None:
         """
         Store the computed hash along with the file path in an SQLite database.
         """
@@ -101,12 +107,12 @@ class SmallBlockForensicsModel:
             """CREATE TABLE IF NOT EXISTS hashes (
             hash TEXT PRIMARY KEY,
             file_path TEXT,
-            block_num INTEGER UNIQUE
+            block_num INTEGER
         )"""
         )
-        c.execute(
-            "INSERT OR IGNORE INTO hashes (hash, file_path, block_num) VALUES (?, ?, ?)",
-            (hash_value, file_path, block_num),
+        c.executemany(
+            "INSERT OR IGNORE INTO hashes (file_path, block_num, hash) VALUES (?, ?, ?)",
+            cells,
         )
 
         db_conn.commit()
@@ -144,16 +150,15 @@ class SmallBlockForensicsModel:
             return
 
         with open(file_path, "rb") as f:
-            mmapped_file = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-
+            cells: list[TableCell] = []
             for block_num in range(num_blocks):
-                mmapped_file.seek(block_num * self.block_size)
-                block = mmapped_file.read(self.block_size)
+                f.seek(block_num * self.block_size)
+                block = f.read(self.block_size)
 
                 block_hash = self._hash_block(block)
-                self._store_hash_in_db(block_num, block_hash, str(file_path), db_conn)
+                cells.append(TableCell(str(file_path), block_num, block_hash))
 
-            mmapped_file.close()
+            self._store_hashes_in_db(cells, db_conn)
 
     def _get_random_blocks_from_file(
         self, file_path: Path, random_blocks: List[int], db_conn: sqlite3.Connection
@@ -170,18 +175,15 @@ class SmallBlockForensicsModel:
         num_blocks = (file_size + self.block_size - 1) // self.block_size  # Total blocks in the file
 
         with open(file_path, "rb") as f:
-            # Use memory-mapping for efficiency
-            mmapped_file = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-
             for block_num in random_blocks:
                 if block_num >= num_blocks:
                     continue  # Skip if the block number exceeds the total blocks in this file
 
                 # Move to the start of the block
-                mmapped_file.seek(block_num * self.block_size)
+                f.seek(block_num * self.block_size)
 
                 # Read the block and hash it
-                block = mmapped_file.read(self.block_size)
+                block = f.read(self.block_size)
                 block_hash = self._hash_block(block)
 
                 # Check if this hash exists in the known content database
@@ -191,8 +193,6 @@ class SmallBlockForensicsModel:
                 if found:
                     # Return the match immediately if found
                     return True, known_file_path, block_num, block_num_in_known_content
-
-            mmapped_file.close()
 
         return False, "", -1, -1
 
@@ -214,6 +214,8 @@ class SmallBlockForensicsModel:
         self.num_random_blocks = self._calculate_num_random_blocks(
             self.num_hashed_blocks_in_known_cntnt, total_blocks
         )
+
+        print(f"INFO: {str(directory)} has a total of {total_blocks} blocks")
 
         return file_block_map, total_blocks
 
@@ -255,9 +257,10 @@ class SmallBlockForensicsModel:
         Hashes random blocks from all files in the directory, and checks the known content hashes in the DB.
         If a match is found, it returns immediately with the file path and hash.
         """
+        print(f"INFO: Hashing random blocks from {str(directory)}")
         random_blocks_info = self._select_random_blocks(directory)
 
-        for file_path, random_blocks in random_blocks_info:
+        for file_path, random_blocks in tqdm(random_blocks_info, disable=IS_TEST_MODE):
             found, known_file_path, block_num_in_target, block_num_in_known_dataset = (
                 self._get_random_blocks_from_file(file_path, random_blocks, db_conn)
             )
@@ -283,7 +286,8 @@ class SmallBlockForensicsModel:
         """
         Fully hashes all blocks of files in the given directory and stores the results in the database.
         """
-        for file_path in directory.rglob("*"):
+        print(f"INFO: Hashing all files in {str(directory)}")
+        for file_path in tqdm(directory.rglob("*"), desc="      Hash Progress: ", disable=IS_TEST_MODE):
             if file_path.is_file():
                 self._hash_all_blocks_in_file(file_path, db_conn)
         print(f"INFO: Successfully processed {str(directory)}")

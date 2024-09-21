@@ -37,7 +37,7 @@ def combined_parser_func(args: argparse.Namespace):
     _print_results(result, args)
 
 
-def generate_hashes_parser_func(args: argparse.Namespace):
+def gen_hash_parser_func(args: argparse.Namespace):
     output_sql = Path(args.output_sql)
     _ensure_output_file_path(output_sql)
 
@@ -46,7 +46,7 @@ def generate_hashes_parser_func(args: argparse.Namespace):
     print()
 
 
-def hash_random_blocks_parser_func(args: argparse.Namespace):
+def hash_random_parser_func(args: argparse.Namespace):
     model = SmallBlockForensicsModel(args.block_size, args.target_probability)
     result = model.run_with_known_content_sqlite(Path(args.input_sql), Path(args.target_directory))
 
@@ -59,7 +59,7 @@ def main():
 
     # Combined Parser
     combined_parser = subparsers.add_parser(
-        "gen_hash_and_hash_random",
+        "gen_hash_random",
         help="Hash random blocks of a target directory and check against hashes of blocks contained within a source directory",
     )
     combined_parser.set_defaults(func=combined_parser_func)
@@ -97,24 +97,24 @@ def main():
     )
 
     # Generate hashes parser
-    generate_hashes_parser = subparsers.add_parser(
-        "generate_hashes",
+    gen_hash_parser = subparsers.add_parser(
+        "gen_hash",
         help="Generate a SQLite DB contains hashes of all the blocks within a source directory",
     )
-    generate_hashes_parser.set_defaults(func=generate_hashes_parser_func)
-    generate_hashes_parser.add_argument(
+    gen_hash_parser.set_defaults(func=gen_hash_parser_func)
+    gen_hash_parser.add_argument(
         "--output_sql",
         type=str,
         help="The path to save the SQLite table for known_content",
         required=True,
     )
-    generate_hashes_parser.add_argument(
+    gen_hash_parser.add_argument(
         "--known_content_directory",
         type=dir_path_arg_parser,
         help="The path to the directory containing the files/folders of known content",
         default=None,
     )
-    generate_hashes_parser.add_argument(
+    gen_hash_parser.add_argument(
         "--block_size",
         type=int,
         help="The block size in bytes to be used. Defaults to 4096.",
@@ -123,31 +123,31 @@ def main():
     )
 
     # Hash Random blocks parser
-    hash_random_blocks_parser = subparsers.add_parser(
-        "hash_random_blocks",
+    hash_random_parser = subparsers.add_parser(
+        "hash_random",
         help="Hash random blocks of a target directory and check against hashes contained within an SQLite DB",
     )
-    hash_random_blocks_parser.set_defaults(func=hash_random_blocks_parser_func)
-    hash_random_blocks_parser.add_argument(
+    hash_random_parser.set_defaults(func=hash_random_parser_func)
+    hash_random_parser.add_argument(
         "--input_sql",
         type=file_path_arg_parser,
         help="The path to the existing SQLite DB containing hashes of known content",
         default=None,
     )
-    hash_random_blocks_parser.add_argument(
+    hash_random_parser.add_argument(
         "--target_directory",
         type=dir_path_arg_parser,
         help="The path to the directory containing files/folders of the content to analyze",
         required=True,
     )
-    hash_random_blocks_parser.add_argument(
+    hash_random_parser.add_argument(
         "--target_probability",
         type=float,
         help="The target probability to achieve. Higher means more of the target drive will be scanned. Defaults to 0.95",
         default=0.95,
         required=False,
     )
-    hash_random_blocks_parser.add_argument(
+    hash_random_parser.add_argument(
         "--block_size",
         type=int,
         help="The block size in bytes to be used. Defaults to 4096.",

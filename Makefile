@@ -7,13 +7,13 @@ format:
 	mypy $(SRC)
 
 test-record:
-	python test/rere.py record test/test.list
+	TESTING=true python test/rere.py record test/test.list
 
 test-replay:
-	python test/rere.py replay test/test.list
+	TESTING=true python test/rere.py replay test/test.list
 
 test-smoketest-record:
-	python test/rere.py record test/test.smoketest.list
+	TESTING=true python test/rere.py record test/test.smoketest.list
 
 test-smoketest-replay:
-	python test/rere.py replay test/test.smoketest.list
+	TESTING=true python test/rere.py replay test/test.smoketest.list
