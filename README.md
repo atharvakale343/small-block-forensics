@@ -1,6 +1,10 @@
 ## Small Block Forensics
 
-An approximation of the [small block forensics technique](https://gist.github.com/atharvakale343/614a721b9ae429d1dce8ee14dd3bed52) that takes two directories as input (target directory, known content directory), and uses the small block randomized technique to find the existence of some file from the known content directory within the target directory. For a visual intro to small block forensics, see this [PDF deck](./docs/intro-to-small-block-forensics.pdf).
+In [small block forensics](https://gist.github.com/atharvakale343/614a721b9ae429d1dce8ee14dd3bed52), the goal is to determine the existence of any content from  a small dataset of known content in a large target drive.
+
+This project approximation of the SBF technique that takes two directories as input (target directory, known content directory), and uses the small block randomized technique to find the existence of some file from the known content directory within the target directory. For a visual intro to small block forensics, see this [PDF deck](./docs/intro-to-small-block-forensics.pdf).
+
+View a video explanation of the project here: [demo.mp4](./docs/small-block-forensics-demo.mp4)
 
 ### Installing requirements
 
@@ -39,20 +43,30 @@ python client_example.py
 Run SBF on a known content directory and target directory
 
 ```zsh
-python cmd_interface.py gen_hash_random --output_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --known_content_directory ./examples/known_dataset --block_size 4
+python cmd_interface.py gen_hash_random \
+    --output_sql ./examples/out/known_content_hashes.sqlite \
+    --target_directory ./examples/target_folder \
+    --known_content_directory ./examples/known_dataset \
+    --block_size 4
 ```
 
 Generate a SQLite DB contains hashes of all the blocks within a source directory
 
 ```zsh
-python cmd_interface.py gen_hash --output_sql ./examples/out/known_content_hashes.sqlite --known_content_directory ./examples/known_dataset --block_size 4
+python cmd_interface.py gen_hash \
+    --output_sql ./examples/out/known_content_hashes.sqlite \
+    --known_content_directory ./examples/known_dataset \
+    --block_size 4
 ```
 
 
 Run SBF on a pre-generated known content directory SQLite DB and target directory
 
 ```zsh
-python cmd_interface.py hash_random --input_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_folder --block_size 4
+python cmd_interface.py hash_random \
+    --input_sql ./examples/out/known_content_hashes.sqlite \
+    --target_directory ./examples/target_folder \
+    --block_size 4
 ```
 
 ### Developing SBF
