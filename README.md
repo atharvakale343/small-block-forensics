@@ -2,7 +2,7 @@
 
 In [small block forensics](https://gist.github.com/atharvakale343/614a721b9ae429d1dce8ee14dd3bed52), the goal is to determine the existence of any content from  a small dataset of known content in a large target drive.
 
-This project approximation of the SBF technique that takes two directories as input (target directory, known content directory), and uses the small block randomized technique to find the existence of some file from the known content directory within the target directory. For a visual intro to small block forensics, see this [PDF deck](./docs/intro-to-small-block-forensics.pdf).
+This project is an approximation of the SBF technique that takes two directories as input (target directory, known content directory), and uses the small block randomized technique to find the existence of some file from the known content directory within the target directory. For a visual intro to small block forensics, see this [PDF deck](./docs/intro-to-small-block-forensics.pdf).
 
 View a video explanation of the project here: [demo.mp4](./docs/small-block-forensics-demo.mp4)
 
