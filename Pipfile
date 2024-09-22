@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pydantic = "~=2.9"
-flask-ml = "0.0.8"
+flask-ml = "0.0.9"
 colorama = "*"
 
 [dev-packages]
