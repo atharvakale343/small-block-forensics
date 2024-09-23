@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from small_blk_forensics.utils.data import MyModelResponse
 
-IS_TEST_MODE = 'TESTING' in os.environ
+IS_TEST_MODE = "TESTING" in os.environ
 
 
 def prod_prob(n_samples, blocks_of_known_content, total_blocks_to_scan):
