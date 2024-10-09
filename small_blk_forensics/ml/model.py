@@ -14,6 +14,10 @@ from small_blk_forensics.utils.data import MyModelResponse
 IS_TEST_MODE = "TESTING" in os.environ
 
 
+def _ensure_output_file_path(path: Path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+
 def prod_prob(n_samples, blocks_of_known_content, total_blocks_to_scan):
     C, N = blocks_of_known_content, total_blocks_to_scan
     return prod(((N - (i - 1)) - C) / (N - (i - 1)) for i in range(1, n_samples + 1))
@@ -39,6 +43,7 @@ class SmallBlockForensicsModel:
         """
         if out_sql_path.is_file():
             out_sql_path.unlink()
+        _ensure_output_file_path(out_sql_path)
         db_conn = self._get_db_conn(out_sql_path)
 
         # Fully hash the known content directory and store hashes in the output directory's database
@@ -261,9 +266,12 @@ class SmallBlockForensicsModel:
         random_blocks_info = self._select_random_blocks(directory)
 
         for file_path, random_blocks in tqdm(random_blocks_info, disable=IS_TEST_MODE):
-            found, known_file_path, block_num_in_target, block_num_in_known_dataset = (
-                self._get_random_blocks_from_file(file_path, random_blocks, db_conn)
-            )
+            (
+                found,
+                known_file_path,
+                block_num_in_target,
+                block_num_in_known_dataset,
+            ) = self._get_random_blocks_from_file(file_path, random_blocks, db_conn)
             if found:
                 return MyModelResponse(
                     found=True,
@@ -276,6 +284,7 @@ class SmallBlockForensicsModel:
         return MyModelResponse(found=False)
 
     def hash_directory(self, directory: Path, out_sql_path: Path) -> None:
+        _ensure_output_file_path(out_sql_path)
         db_conn = self._get_db_conn(out_sql_path)
 
         # Fully hash the known content directory and store hashes in the output directory's database

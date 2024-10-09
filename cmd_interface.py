@@ -8,10 +8,6 @@ from small_blk_forensics.utils.common import dir_path_arg_parser, file_path_arg_
 from small_blk_forensics.utils.data import MyModelResponse
 
 
-def _ensure_output_file_path(path: Path):
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-
 def _print_results(result: MyModelResponse, args: argparse.Namespace):
     print()
     print("Results:")
@@ -27,7 +23,6 @@ def _print_results(result: MyModelResponse, args: argparse.Namespace):
 
 def combined_parser_func(args: argparse.Namespace):
     output_sql_file = Path(args.output_sql)
-    _ensure_output_file_path(output_sql_file)
 
     model = SmallBlockForensicsModel(args.block_size, args.target_probability)
     result = model.run_with_known_content_directory(
@@ -39,7 +34,6 @@ def combined_parser_func(args: argparse.Namespace):
 
 def gen_hash_parser_func(args: argparse.Namespace):
     output_sql = Path(args.output_sql)
-    _ensure_output_file_path(output_sql)
 
     model = SmallBlockForensicsModel(args.block_size)
     model.hash_directory(Path(args.known_content_directory), output_sql)
