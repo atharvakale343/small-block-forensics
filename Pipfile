@@ -15,7 +15,6 @@ mypy = "~=1.11"
 flake8 = "~=7.1"
 isort = "~=5.13"
 hapless = "*"
-tqdm = "*"
 types-tqdm = "*"
 
 [requires]
