@@ -297,7 +297,7 @@ class SmallBlockForensicsModel:
         """
         print(f"INFO: Hashing all files in {str(directory)}")
         for file_path in tqdm(directory.rglob("*"), desc="      Hash Progress: ", disable=IS_TEST_MODE):
-            if file_path.is_file():
+            if file_path.is_file() and file_path.name != '.DS_Store':
                 self._hash_all_blocks_in_file(file_path, db_conn)
         print(f"INFO: Successfully processed {str(directory)}")
         print(f"INFO: Stored hashes at {out_path}")

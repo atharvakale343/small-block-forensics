@@ -1,4 +1,5 @@
 from logging import Logger
+import os
 from pathlib import Path
 
 from flask import Response
@@ -126,8 +127,9 @@ def execute(inputs: list[CustomInput], parameters: dict):
             ),
         )
     except Exception as e:
+        logger.error('An error occurred while executing the model')
         logger.error(e)
         return ErrorResponseModel(errors=[f"Server Error: {str(e)}"]).get_response(500)
 
 
-server.run()
+server.run(port=os.environ.get('FLASK_RUN_PORT') or 5000)
