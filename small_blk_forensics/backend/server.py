@@ -6,8 +6,18 @@ from typing import Optional, TypedDict
 
 from flask_ml.flask_ml_server import MLServer
 from flask_ml.flask_ml_server.models import (
+    DirectoryInput,
+    FileInput,
+    FloatRangeDescriptor,
+    InputSchema,
+    InputType,
+    IntRangeDescriptor,
     MarkdownResponse,
-    ResponseBody, FileInput, DirectoryInput,
+    ParameterSchema,
+    RangedFloatParameterDescriptor,
+    RangedIntParameterDescriptor,
+    ResponseBody,
+    TaskSchema,
 )
 
 from small_blk_forensics.utils.common import is_dir_path
@@ -94,21 +104,71 @@ def _execute_throws(
     )
 
 
+def task_schema_func_known_directory():
+    return TaskSchema(
+        inputs=[
+            InputSchema(
+                key="target_folder",
+                label="Target Directory",
+                subtitle="The directory containing files/folders of the content to analyze",
+                input_type=InputType.DIRECTORY,
+            ),
+            InputSchema(
+                key="known_dataset",
+                label="Known Content Directory",
+                subtitle="The directory containing the files/folders of known content",
+                input_type=InputType.DIRECTORY,
+            ),
+            InputSchema(
+                key="output_sql_path",
+                label="Output SQL Path",
+                subtitle="The path to save the SQLite table for known_content",
+                input_type=InputType.FILE,
+            ),
+        ],
+        parameters=[
+            ParameterSchema(
+                key="block_size",
+                label="Block Size",
+                subtitle="The block size in bytes to be used. Defaults to 4096.",
+                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=1024), default=4096),
+            ),
+            ParameterSchema(
+                key="target_probability",
+                label="Target Probability",
+                subtitle="The target probability to achieve. Higher means more of the target drive will be scanned. Defaults to 0.95",
+                value=RangedFloatParameterDescriptor(
+                    range=FloatRangeDescriptor(
+                        min=0,
+                        max=1,
+                    ),
+                    default=0.95,
+                ),
+            ),
+        ],
+    )
+
+
 class InputsKnownContentDirectory(TypedDict):
-    TARGET_FOLDER: DirectoryInput
-    KNOWN_DATASET: DirectoryInput
-    OUTPUT_SQL_PATH: FileInput
+    target_folder: DirectoryInput
+    known_dataset: DirectoryInput
+    output_sql_path: FileInput
 
 
-@server.route("/execute_with_known_content_directory")
+@server.route(
+    "/gen_hash_random",
+    task_schema_func=task_schema_func_known_directory,
+    short_title="Hash random blocks of a target directory",
+    order=0,
+)
 def execute(inputs: InputsKnownContentDirectory, parameters: Parameters):
     try:
         return _execute_throws(
             parameters,
-            inputs["TARGET_FOLDER"].path,
-            inputs["KNOWN_DATASET"].path,
+            inputs["target_folder"].path,
+            inputs["known_dataset"].path,
             None,
-            inputs["OUTPUT_SQL_PATH"].path,
+            inputs["output_sql_path"].path,
         )
     except Exception as e:
         logger.error("An error occurred while executing the model")
@@ -116,19 +176,121 @@ def execute(inputs: InputsKnownContentDirectory, parameters: Parameters):
         raise
 
 
+def task_schema_func_known_sql():
+    return TaskSchema(
+        inputs=[
+            InputSchema(
+                key="target_folder",
+                label="Target Directory",
+                subtitle="The directory containing files/folders of the content to analyze",
+                input_type=InputType.DIRECTORY,
+            ),
+            InputSchema(
+                key="input_sql",
+                label="Input SQL",
+                subtitle="The path to the existing SQLite DB containing hashes of known content",
+                input_type=InputType.FILE,
+            ),
+        ],
+        parameters=[
+            ParameterSchema(
+                key="block_size",
+                label="Block Size",
+                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=1024), default=4096),
+            ),
+            ParameterSchema(
+                key="target_probability",
+                label="Target Probability",
+                value=RangedFloatParameterDescriptor(
+                    range=FloatRangeDescriptor(
+                        min=0,
+                        max=1,
+                    ),
+                    default=0.95,
+                ),
+            ),
+        ],
+    )
+
+
 class InputsKnownContentSql(TypedDict):
-    TARGET_FOLDER: DirectoryInput
-    INPUT_SQL: FileInput
+    target_folder: DirectoryInput
+    input_sql: FileInput
 
 
-@server.route("/execute_with_known_content_sql")
+@server.route(
+    "/hash_random",
+    task_schema_func=task_schema_func_known_sql,
+    order=1,
+    short_title="Hash random blocks of a target directory with seed DB",
+)
 def execute_sql(inputs: InputsKnownContentSql, parameters: Parameters):
     try:
-        return _execute_throws(parameters, inputs["TARGET_FOLDER"].path, None, inputs["INPUT_SQL"].path, None)
+        return _execute_throws(parameters, inputs["target_folder"].path, None, inputs["input_sql"].path, None)
     except Exception as e:
         logger.error("An error occurred while executing the model")
         logger.error(e)
         raise
 
 
-server.run(port=os.environ.get("FLASK_RUN_PORT") or 5000)
+def task_schema_func_gen_hash():
+    return TaskSchema(
+        inputs=[
+            InputSchema(
+                key="known_content_directory",
+                label="Known Content Directory",
+                subtitle="The directory containing the files/folders of known content",
+                input_type=InputType.DIRECTORY,
+            ),
+            InputSchema(
+                key="output_sql_path",
+                label="Output SQL Path",
+                subtitle="The path to save the SQLite table for known_content",
+                input_type=InputType.FILE,
+            ),
+        ],
+        parameters=[
+            ParameterSchema(
+                key="block_size",
+                label="Block Size",
+                subtitle="The block size in bytes to be used. Defaults to 4096.",
+                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=1024), default=4096),
+            ),
+        ],
+    )
+
+
+class InputsGenerateSqlDb(TypedDict):
+    known_content_directory: DirectoryInput
+    output_sql_path: FileInput
+
+
+class ParametersGenerateSqlDb(TypedDict):
+    block_size: int
+
+
+@server.route(
+    "/gen_hash",
+    task_schema_func=task_schema_func_gen_hash,
+    short_title="Generate SQLite DB of Hashes",
+    order=2,
+)
+def execute_gen_hash(inputs: InputsGenerateSqlDb, parameters: ParametersGenerateSqlDb):
+    model = SmallBlockForensicsModel(parameters["block_size"])
+    model.hash_directory(Path(inputs["known_content_directory"].path), Path(inputs["output_sql_path"].path))
+    return ResponseBody(
+        root=MarkdownResponse(
+            title="Small Block Forensics",
+            value=dedent(
+                f"""
+        ## Results
+        
+        - Successfully generated SQLite DB at {inputs["output_sql_path"].path}
+    """
+            ),
+        )
+    )
+
+
+if __name__ == "__main__":
+    server.run(port=os.environ.get("FLASK_RUN_PORT") or 5000)
