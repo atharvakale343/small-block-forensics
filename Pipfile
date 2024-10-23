@@ -5,17 +5,17 @@ name = "pypi"
 
 [packages]
 pydantic = "~=2.9"
-flask-ml = "0.0.9"
-colorama = "*"
-tqdm = "*"
+colorama = "0.4.6"
+tqdm = "4.66.5"
+flask-ml = "0.2.1"
 
 [dev-packages]
 black = "~=24.8"
 mypy = "~=1.11"
 flake8 = "~=7.1"
 isort = "~=5.13"
-hapless = "*"
-types-tqdm = "*"
+hapless = "0.5.1"
+types-tqdm = "~=4.66"
 
 [requires]
 python_version = "3.11"
