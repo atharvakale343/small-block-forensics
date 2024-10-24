@@ -18,7 +18,7 @@ sleep 3 && python client_example.py
 :i returncode 0
 :b stdout 591
 INFO: Received a response
-[{'result': {'found': True, 'target_file': '/Users/atharvakale/workspace/umass/596e-cs/individual-project/small-block-forensics/examples/target_folder/sample.txt', 'known_dataset_file': '/Users/atharvakale/workspace/umass/596e-cs/individual-project/small-block-forensics/examples/known_dataset/sample.txt', 'block_num_in_known_dataset': 0, 'block_num_in_target': 1}, 'text': 'RESULTS'}, {'result': '/Users/atharvakale/workspace/umass/596e-cs/individual-project/small-block-forensics/examples/out/known_content_hashes.sqlite', 'text': 'Successfully stored hashes'}]
+[{'result': {'found': True, 'target_file': '/Users/atharvakale/workspace/umass/596e-cs/individual-project/small-block-forensics/examples/target_directory/sample.txt', 'known_dataset_file': '/Users/atharvakale/workspace/umass/596e-cs/individual-project/small-block-forensics/examples/known_dataset/sample.txt', 'block_num_in_known_dataset': 0, 'block_num_in_target': 1}, 'text': 'RESULTS'}, {'result': '/Users/atharvakale/workspace/umass/596e-cs/individual-project/small-block-forensics/examples/out/known_content_hashes.sqlite', 'text': 'Successfully stored hashes'}]
 
 :b stderr 0
 

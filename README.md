@@ -34,6 +34,8 @@ python -m small_blk_forensics.backend.server
 
 ### Client example
 
+Pre-requisite: start the server in the background.
+
 ```zsh
 python client_example.py
 ```
@@ -45,8 +47,8 @@ Run SBF on a known content directory and target directory
 ```zsh
 python cmd_interface.py gen_hash_random \
     --output_sql ./examples/out/known_content_hashes.sqlite \
-    --target_directory ./examples/target_folder \
-    --known_content_directory ./examples/known_dataset \
+    --target_directory ./examples/target_directory \
+    --known_content_directory ./examples/known_content_directory \
     --block_size 4
 ```
 
@@ -55,7 +57,7 @@ Generate a SQLite DB contains hashes of all the blocks within a source directory
 ```zsh
 python cmd_interface.py gen_hash \
     --output_sql ./examples/out/known_content_hashes.sqlite \
-    --known_content_directory ./examples/known_dataset \
+    --known_content_directory ./examples/known_content_directory \
     --block_size 4
 ```
 
@@ -65,7 +67,7 @@ Run SBF on a pre-generated known content directory SQLite DB and target director
 ```zsh
 python cmd_interface.py hash_random \
     --input_sql ./examples/out/known_content_hashes.sqlite \
-    --target_directory ./examples/target_folder \
+    --target_directory ./examples/target_directory \
     --block_size 4
 ```
 

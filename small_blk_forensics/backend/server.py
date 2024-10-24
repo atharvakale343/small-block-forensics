@@ -108,13 +108,13 @@ def task_schema_func_known_directory():
     return TaskSchema(
         inputs=[
             InputSchema(
-                key="target_folder",
+                key="target_directory",
                 label="Target Directory",
                 subtitle="The directory containing files/folders of the content to analyze",
                 input_type=InputType.DIRECTORY,
             ),
             InputSchema(
-                key="known_dataset",
+                key="known_content_directory",
                 label="Known Content Directory",
                 subtitle="The directory containing the files/folders of known content",
                 input_type=InputType.DIRECTORY,
@@ -150,8 +150,8 @@ def task_schema_func_known_directory():
 
 
 class InputsKnownContentDirectory(TypedDict):
-    target_folder: DirectoryInput
-    known_dataset: DirectoryInput
+    target_directory: DirectoryInput
+    known_content_directory: DirectoryInput
     output_sql_path: FileInput
 
 
@@ -165,8 +165,8 @@ def execute(inputs: InputsKnownContentDirectory, parameters: Parameters):
     try:
         return _execute_throws(
             parameters,
-            inputs["target_folder"].path,
-            inputs["known_dataset"].path,
+            inputs["target_directory"].path,
+            inputs["known_content_directory"].path,
             None,
             inputs["output_sql_path"].path,
         )
@@ -180,7 +180,7 @@ def task_schema_func_known_sql():
     return TaskSchema(
         inputs=[
             InputSchema(
-                key="target_folder",
+                key="target_directory",
                 label="Target Directory",
                 subtitle="The directory containing files/folders of the content to analyze",
                 input_type=InputType.DIRECTORY,
@@ -214,7 +214,7 @@ def task_schema_func_known_sql():
 
 
 class InputsKnownContentSql(TypedDict):
-    target_folder: DirectoryInput
+    target_directory: DirectoryInput
     input_sql: FileInput
 
 
@@ -226,7 +226,7 @@ class InputsKnownContentSql(TypedDict):
 )
 def execute_sql(inputs: InputsKnownContentSql, parameters: Parameters):
     try:
-        return _execute_throws(parameters, inputs["target_folder"].path, None, inputs["input_sql"].path, None)
+        return _execute_throws(parameters, inputs["target_directory"].path, None, inputs["input_sql"].path, None)
     except Exception as e:
         logger.error("An error occurred while executing the model")
         logger.error(e)

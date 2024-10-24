@@ -15,9 +15,9 @@
         "--output_sql",
         "./examples/out/known_content_hashes.sqlite",
         "--target_directory",
-        "./examples/target_folder",
+        "./examples/target_directory",
         "--known_content_directory",
-        "./examples/known_dataset"
+        "./examples/known_content_directory"
       ],
       "preLaunchTask": "remove-sqlite"
     },
@@ -32,7 +32,7 @@
         "--output_sql",
         "./examples/out/known_content_images_hashes.sqlite",
         "--known_content_directory",
-        "./examples/known_dataset_images"
+        "./examples/known_content_directory_images"
       ]
     },
     {
@@ -48,6 +48,23 @@
       "request": "launch",
       "module": "small_blk_forensics.backend.server",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "new cli",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "cmd_interface2.py",
+      "console": "integratedTerminal",
+      "args": [
+        "gen_hash",
+        "--known_content_directory",
+        "examples/known_content_directory",
+        "--output_sql_path",
+        "examples/out/known_content_hashes.sqlite",
+        "--test_directories",
+        "one",
+        "two"
+      ]
     }
   ]
 }

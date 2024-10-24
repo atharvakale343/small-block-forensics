@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f0bff829bae5fd7d39a415098312147401797aa3e1c7a648921abe88476c382c"
+            "sha256": "e74b44fca38faddc0b0896e918229fc0ab9d7bbface004ed81644acacabc910c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -237,12 +237,12 @@
         },
         "flask-ml": {
             "hashes": [
-                "sha256:642642e188c910e11d2ed803c511a9d3ce806e296737cfd7a0c6f1f3652b80ee",
-                "sha256:96efe1332f4544b1bc612c69d7de0aba415a19b35011b6236b53190cf8c7c469"
+                "sha256:e0caf996fff1c68d35d60ffdbc9d1c9ee89d6fbe8f3d6046a0a36bac4fa785dd",
+                "sha256:f7a64edce080c09415fa7be377a7fe9e3f630e9e17ed80299b8b92cce12f2651"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.10'",
-            "version": "==0.2.1"
+            "version": "==0.2.2"
         },
         "genson": {
             "hashes": [

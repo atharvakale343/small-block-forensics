@@ -1,7 +1,7 @@
 examples/out/*
 test.py
-examples/known_dataset_images
-examples/target_folder_images
+examples/known_content_directory_images
+examples/target_directory_images
 
 # MacOS
 .DS_Store

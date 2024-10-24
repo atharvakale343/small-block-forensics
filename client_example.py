@@ -8,9 +8,9 @@ root = pathlib.Path(__file__).parent.resolve()
 
 # The inputs to be sent to the server
 inputs = {
-    "known_dataset": {"path": f'{root.joinpath("examples", "known_dataset")}'},
+    "known_content_directory": {"path": f'{root.joinpath("examples", "known_content_directory")}'},
     "output_sql_path": {"path": f'{root.joinpath("examples", "out", "known_content_hashes.sqlite")}'},
-    "target_folder": {"path": f'{root.joinpath("examples", "target_folder")}'},
+    "target_directory": {"path": f'{root.joinpath("examples", "target_directory")}'},
 }
 
 # Parameters of the model
