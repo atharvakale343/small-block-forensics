@@ -86,9 +86,9 @@ def _execute_throws(
                         
                         - Found: {results.found}
                         - Target File: {results.target_file}
+                        - Block Number in Target File: {results.block_num_in_target_file}
                         - Known Dataset File: {results.known_dataset_file}
-                        - Block Number in Known Dataset: {results.block_num_in_known_dataset}
-                        - Block Number in Target: {results.block_num_in_target}
+                        - Block Number in Known Dataset File: {results.block_num_in_known_dataset_file}
                         """
                 )
                 if results.found

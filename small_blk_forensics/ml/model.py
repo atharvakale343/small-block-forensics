@@ -277,8 +277,8 @@ class SmallBlockForensicsModel:
                     found=True,
                     target_file=str(file_path),
                     known_dataset_file=known_file_path,
-                    block_num_in_target=block_num_in_target,
-                    block_num_in_known_dataset=block_num_in_known_dataset,
+                    block_num_in_target_file=block_num_in_target,
+                    block_num_in_known_dataset_file=block_num_in_known_dataset,
                 )
 
         return MyModelResponse(found=False)
