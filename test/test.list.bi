@@ -15,11 +15,11 @@ INFO: Successfully processed examples/known_content_directory
 INFO: Stored hashes at examples/out/known_content_hashes.sqlite
 
 INFO: Hashing random blocks from examples/target_directory
-INFO: examples/target_directory has a total of 2 blocks
+INFO: examples/target_directory has a total of 1 blocks
 
 {
     "output_type": "markdown",
-    "value": "\n## Results\n\n- Found: True\n- Target File: examples/target_directory/sample.txt\n- Block Number in Target File: 1\n- Known Dataset File: examples/known_content_directory/sample.txt\n- Block Number in Known Dataset File: 1\n",
+    "value": "\n## Results\n\n- Found: True\n- Target File: examples/target_directory/sample.txt\n- Block Number in Target File: 0\n- Known Dataset File: examples/known_content_directory/sample.txt\n- Block Number in Known Dataset File: 0\n",
     "title": "Small Block Forensics",
 
 :b stderr 0
@@ -74,11 +74,11 @@ python cmd_interface.py hash_random --input_sql ./examples/out/known_content_has
 :i returncode 0
 :b stdout 430
 INFO: Hashing random blocks from examples/target_directory
-INFO: examples/target_directory has a total of 2 blocks
+INFO: examples/target_directory has a total of 1 blocks
 
 {
     "output_type": "markdown",
-    "value": "\n## Results\n\n- Found: True\n- Target File: examples/target_directory/sample.txt\n- Block Number in Target File: 1\n- Known Dataset File: examples/known_content_directory/sample.txt\n- Block Number in Known Dataset File: 1\n",
+    "value": "\n## Results\n\n- Found: True\n- Target File: examples/target_directory/sample.txt\n- Block Number in Target File: 0\n- Known Dataset File: examples/known_content_directory/sample.txt\n- Block Number in Known Dataset File: 0\n",
     "title": "Small Block Forensics",
 
 :b stderr 0
