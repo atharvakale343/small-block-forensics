@@ -4,7 +4,7 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Optional, TypedDict
 
-from flask_ml.flask_ml_server import MLServer
+from flask_ml.flask_ml_server import MLServer, load_file_as_string
 from flask_ml.flask_ml_server.models import (
     DirectoryInput,
     FileInput,
@@ -27,6 +27,13 @@ from ..ml.model import SmallBlockForensicsModel
 
 server = MLServer(__name__)
 logger = Logger(__name__)
+
+server.add_app_metadata(
+    name="Small Block Forensics",
+    author="Atharva Kale",
+    version="0.1.0",
+    info=load_file_as_string("./small_blk_forensics/backend/application_info.md"),
+)
 
 
 def _execute_throws(
@@ -131,7 +138,7 @@ def task_schema_func_known_directory():
                 key="block_size",
                 label="Block Size",
                 subtitle="The block size in bytes to be used. Defaults to 4096.",
-                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=1024), default=4096),
+                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=8192), default=4096),
             ),
             ParameterSchema(
                 key="target_probability",
@@ -196,7 +203,7 @@ def task_schema_func_known_sql():
             ParameterSchema(
                 key="block_size",
                 label="Block Size",
-                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=1024), default=4096),
+                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=8192), default=4096),
             ),
             ParameterSchema(
                 key="target_probability",
@@ -254,7 +261,7 @@ def task_schema_func_gen_hash():
                 key="block_size",
                 label="Block Size",
                 subtitle="The block size in bytes to be used. Defaults to 4096.",
-                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=1024), default=4096),
+                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=8192), default=4096),
             ),
         ],
     )
