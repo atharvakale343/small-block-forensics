@@ -233,7 +233,9 @@ class InputsKnownContentSql(TypedDict):
 )
 def execute_sql(inputs: InputsKnownContentSql, parameters: Parameters):
     try:
-        return _execute_throws(parameters, inputs["target_directory"].path, None, inputs["input_sql"].path, None)
+        return _execute_throws(
+            parameters, inputs["target_directory"].path, None, inputs["input_sql"].path, None
+        )
     except Exception as e:
         logger.error("An error occurred while executing the model")
         logger.error(e)
