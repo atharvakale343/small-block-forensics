@@ -9,18 +9,36 @@
 :b shell 231
 python cmd_interface.py gen_hash_random --output_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_directory --known_content_directory ./examples/known_content_directory --block_size 4 | head -n -2
 :i returncode 0
-:b stdout 617
+:b stdout 822
 INFO: Hashing all files in examples/known_content_directory
 INFO: Successfully processed examples/known_content_directory
 INFO: Stored hashes at examples/out/known_content_hashes.sqlite
 
 INFO: Hashing random blocks from examples/target_directory
 INFO: examples/target_directory has a total of 1 blocks
+	Results:
+	Small Block Forensics
 
-{
-    "output_type": "markdown",
-    "value": "\n## Results\n\n- Found: True\n- Target File: examples/target_directory/sample.txt\n- Block Number in Target File: 0\n- Known Dataset File: examples/known_content_directory/sample.txt\n- Block Number in Known Dataset File: 0\n",
-    "title": "Small Block Forensics",
+	## Results
+	
+	- Found: True
+	- Target File: examples/target_directory/sample.txt
+	- Block Number in Target File: 0
+	- Known Dataset File: examples/known_content_directory/sample.txt
+	- Block Number in Known Dataset File: 0
+	
+
+
+	Results:
+	Small Block Forensics
+
+	## Results
+	
+	- Found: True
+	- Target File: examples/target_directory/sample.txt
+	- Block Number in Target File: 0
+	- Known Dataset File: examples/known_content_directory/sample.txt
+	- Block Number in Known Dataset File: 0
 
 :b stderr 0
 
@@ -41,17 +59,27 @@ INFO: examples/target_directory has a total of 1 blocks
 :b shell 164
 python cmd_interface.py gen_hash --output_sql ./examples/out/known_content_hashes.sqlite --known_content_directory ./examples/known_content_directory --block_size 4
 :i returncode 0
-:b stdout 396
+:b stdout 453
 INFO: Hashing all files in examples/known_content_directory
 INFO: Successfully processed examples/known_content_directory
 INFO: Stored hashes at examples/out/known_content_hashes.sqlite
+	Results:
+	Small Block Forensics
 
-{
-    "output_type": "markdown",
-    "value": "\n## Results\n\n- Successfully generated SQLite DB at ./examples/out/known_content_hashes.sqlite\n",
-    "title": "Small Block Forensics",
-    "subtitle": null
-}
+	## Results
+	
+	- Successfully generated SQLite DB at ./examples/out/known_content_hashes.sqlite
+	
+
+
+	Results:
+	Small Block Forensics
+
+	## Results
+	
+	- Successfully generated SQLite DB at ./examples/out/known_content_hashes.sqlite
+	
+
 
 :b stderr 0
 
@@ -72,14 +100,32 @@ INFO: Stored hashes at examples/out/known_content_hashes.sqlite
 :b shell 165
 python cmd_interface.py hash_random --input_sql ./examples/out/known_content_hashes.sqlite --target_directory ./examples/target_directory --block_size 4 | head -n -2
 :i returncode 0
-:b stdout 430
+:b stdout 635
 INFO: Hashing random blocks from examples/target_directory
 INFO: examples/target_directory has a total of 1 blocks
+	Results:
+	Small Block Forensics
 
-{
-    "output_type": "markdown",
-    "value": "\n## Results\n\n- Found: True\n- Target File: examples/target_directory/sample.txt\n- Block Number in Target File: 0\n- Known Dataset File: examples/known_content_directory/sample.txt\n- Block Number in Known Dataset File: 0\n",
-    "title": "Small Block Forensics",
+	## Results
+	
+	- Found: True
+	- Target File: examples/target_directory/sample.txt
+	- Block Number in Target File: 0
+	- Known Dataset File: examples/known_content_directory/sample.txt
+	- Block Number in Known Dataset File: 0
+	
+
+
+	Results:
+	Small Block Forensics
+
+	## Results
+	
+	- Found: True
+	- Target File: examples/target_directory/sample.txt
+	- Block Number in Target File: 0
+	- Known Dataset File: examples/known_content_directory/sample.txt
+	- Block Number in Known Dataset File: 0
 
 :b stderr 0
 
