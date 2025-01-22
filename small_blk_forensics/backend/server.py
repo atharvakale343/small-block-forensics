@@ -18,6 +18,7 @@ from flask_ml.flask_ml_server.models import (
     RangedIntParameterDescriptor,
     ResponseBody,
     TaskSchema,
+    NewFileInputType,
 )
 
 from small_blk_forensics.utils.common import is_dir_path
@@ -130,7 +131,10 @@ def task_schema_func_known_directory():
                 key="output_sql_path",
                 label="Output SQL Path",
                 subtitle="The path to save the SQLite table for known_content",
-                input_type=InputType.FILE,
+                input_type=NewFileInputType(
+                    allowed_extensions=[".db"],
+                    default_extension=".db",
+                ),
             ),
         ],
         parameters=[
@@ -138,7 +142,9 @@ def task_schema_func_known_directory():
                 key="block_size",
                 label="Block Size",
                 subtitle="The block size in bytes to be used. Defaults to 4096.",
-                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=8192), default=4096),
+                value=RangedIntParameterDescriptor(
+                    range=IntRangeDescriptor(min=1, max=8192), default=4096
+                ),
             ),
             ParameterSchema(
                 key="target_probability",
@@ -203,7 +209,9 @@ def task_schema_func_known_sql():
             ParameterSchema(
                 key="block_size",
                 label="Block Size",
-                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=8192), default=4096),
+                value=RangedIntParameterDescriptor(
+                    range=IntRangeDescriptor(min=1, max=8192), default=4096
+                ),
             ),
             ParameterSchema(
                 key="target_probability",
@@ -263,7 +271,9 @@ def task_schema_func_gen_hash():
                 key="block_size",
                 label="Block Size",
                 subtitle="The block size in bytes to be used. Defaults to 4096.",
-                value=RangedIntParameterDescriptor(range=IntRangeDescriptor(min=1, max=8192), default=4096),
+                value=RangedIntParameterDescriptor(
+                    range=IntRangeDescriptor(min=1, max=8192), default=4096
+                ),
             ),
         ],
     )
@@ -286,7 +296,9 @@ class ParametersGenerateSqlDb(TypedDict):
 )
 def execute_gen_hash(inputs: InputsGenerateSqlDb, parameters: ParametersGenerateSqlDb):
     model = SmallBlockForensicsModel(parameters["block_size"])
-    model.hash_directory(Path(inputs["known_content_directory"].path), Path(inputs["output_sql_path"].path))
+    model.hash_directory(
+        Path(inputs["known_content_directory"].path), Path(inputs["output_sql_path"].path)
+    )
     return ResponseBody(
         root=MarkdownResponse(
             title="Small Block Forensics",
